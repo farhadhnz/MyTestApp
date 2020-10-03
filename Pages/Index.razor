@@ -1,0 +1,59 @@
+﻿@page "/"
+
+@using TushehbarApp.Data
+@inject PhraseFinderService FinderService
+
+<h1>Phrase Finder</h1>
+
+<form @onsubmit="FindSentences">
+    <div class="form-group">
+        <label for="exampleInputEmail1">Phrase</label>
+        <input @bind="phrase" class="form-control" placeholder="Enter phrase">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+@if (sentences == null)
+{
+    <p><em>Please Search a Phrase ...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sentence</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in sentences)
+            {
+                <tr>
+                    <td>@forecast</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string phrase;
+    private List<string> sentences;
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    //}
+
+    private async Task FindSentences()
+    {
+        if (phrase == null || string.IsNullOrEmpty(phrase) || string.IsNullOrWhiteSpace(phrase))
+        {
+            sentences = new List<string>();
+            return;
+        }
+        sentences = await FinderService.GetSentencesAsync(phrase);
+    }
+}
+
